@@ -17,11 +17,12 @@ using Org.BouncyCastle.Crypto.Engines;
 namespace StegoApp
 {
 
-    public partial class MainWindow : Window
+    public partial class LoginWindow : Window
     {
-        public MainWindow()
+        public LoginWindow()
         {
             InitializeComponent();
+            User.LoadUsers();
         }
     }
 }
