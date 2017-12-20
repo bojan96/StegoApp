@@ -23,5 +23,12 @@ namespace StegoApp
         {
             InitializeComponent();
         }
+
+        void LoginButtonClick(object sender, RoutedEventArgs evArgs)
+        {
+
+  
+
+        }
     }
 }
