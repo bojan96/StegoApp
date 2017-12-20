@@ -22,7 +22,6 @@ namespace StegoApp
         public LoginWindow()
         {
             InitializeComponent();
-            User.LoadUsers();
         }
     }
 }
