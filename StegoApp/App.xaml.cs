@@ -13,5 +13,25 @@ namespace StegoApp
     /// </summary>
     public partial class App : Application
     {
+
+        void OnAppStart(object sender,StartupEventArgs args)
+        {
+
+            try
+            {
+
+                User.LoadUsers();
+                LoginWindow win = new LoginWindow();
+                win.Show();
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+
+        }
     }
 }
