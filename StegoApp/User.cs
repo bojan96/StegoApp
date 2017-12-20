@@ -16,7 +16,7 @@ namespace StegoApp
         public string CertSerial { get; }
         public string PasswHash { get; }
 
-        public static Dictionary<string, User> AllUsers { get; private set } = null;
+        public static Dictionary<string, User> AllUsers { get; private set; } = null;
 
         const string XML_PATH = "users.xml";
         const string XML_SCHEMA = "users.xsd";
