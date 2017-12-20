@@ -26,11 +26,6 @@
         <TextBox Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"></TextBox>
         <PasswordBox Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center"></PasswordBox>
         <Button Grid.Row="2" Grid.Column="1" Content="Login" Margin="0,05,0,0"></Button>
-        <!--<Button Content="Login" HorizontalAlignment="Left" Margin="78,70,0,0" VerticalAlignment="Top" Width="210" Height="23"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="78,10,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="210"/>
-        <Label Content="Username" HorizontalAlignment="Left" Margin="7,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Password" HorizontalAlignment="Left" Margin="7,38,0,0" VerticalAlignment="Top"/>
-        <PasswordBox HorizontalAlignment="Left" Margin="78,41,0,0" VerticalAlignment="Top" Width="210" Height="23"/> -->
-
+ 
     </Grid>
 </Window>
