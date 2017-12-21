@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Org.BouncyCastle.Crypto.Engines;
 
 namespace StegoApp
 {
@@ -27,8 +26,55 @@ namespace StegoApp
         void LoginButtonClick(object sender, RoutedEventArgs evArgs)
         {
 
-  
+            bool validCred = CheckCredentials(usernameTextBox.Text, passwordTextBox.Password);
 
+            if (!validCred)
+                return;
+
+            User user;
+            var status = User.AuthenticateUser(usernameTextBox.Text, passwordTextBox.Password, out user);
+
+            bool openMainWindow = (status == User.AuthStatus.Succesful);
+
+            if (status == User.AuthStatus.InvalidUsername)
+                MessageBox.Show("Invalid username", "Invalid username", MessageBoxButton.OK);
+            else if (status == User.AuthStatus.InvalidPassword)
+                MessageBox.Show("Invalid password", "Invalid password", MessageBoxButton.OK);
+
+
+            if(openMainWindow)
+            {
+
+                MainWindow mainWin = new MainWindow(user);
+                mainWin.Show();
+                Close();
+
+            }
+                
+        }
+
+
+        
+        bool CheckCredentials(string username,string password)
+        {
+
+            if (username == "")
+            {
+
+                MessageBox.Show("Username field is empty");
+                return false;
+
+            }
+
+            if (password == "")
+            {
+
+                MessageBox.Show("Password field is empty");
+                return false;
+
+            }
+
+            return true;
         }
     }
 }

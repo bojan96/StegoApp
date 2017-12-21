@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace StegoApp
 {
-    class User
+    public class User
     {
 
         public string FullName { get; }

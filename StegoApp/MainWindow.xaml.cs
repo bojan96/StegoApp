@@ -19,9 +19,15 @@ namespace StegoApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+
+        User currentUser;
+
+        public MainWindow(User user)
         {
+
             InitializeComponent();
+            currentUser = user;
+
         }
     }
 }

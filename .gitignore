@@ -261,3 +261,6 @@ __pycache__/
 *.pyc
 /StegoApp/users.xml
 /StegoApp/users.xsd
+/StegoApp/Unread/jj.txt
+/StegoApp/Unread/pp.txt
+/StegoApp/Unread/mm.txt
