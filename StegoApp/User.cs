@@ -15,19 +15,21 @@ namespace StegoApp
         public string Nickname { get; }
         public string CertSerial { get; }
         public string PasswHash { get; }
+        public string UnreadFile { get; }
 
         public static Dictionary<string, User> AllUsers { get; private set; } = null;
 
         const string XML_PATH = "users.xml";
         const string XML_SCHEMA = "users.xsd";
 
-        User(string fullName, string nickname, string certSerial, string passwHash)
+        User(string fullName, string nickname, string certSerial, string passwHash,string unreadFile)
         {
 
             FullName = fullName;
             Nickname = nickname;
             CertSerial = certSerial;
             PasswHash = passwHash;
+            UnreadFile = unreadFile;
             
         }
 
@@ -60,13 +62,15 @@ namespace StegoApp
             string nickname;
             string certSerial;
             string passwHash;
+            string unreadFile;
 
             fullName = xmlNode.ChildNodes[0].FirstChild.Value;
             nickname = xmlNode.ChildNodes[1].FirstChild.Value;
             certSerial = xmlNode.ChildNodes[2].FirstChild.Value;
             passwHash = xmlNode.ChildNodes[3].FirstChild.Value;
+            unreadFile = xmlNode.ChildNodes[4].FirstChild.Value;
 
-            return new User(fullName, nickname, certSerial, passwHash);
+            return new User(fullName, nickname, certSerial, passwHash,unreadFile);
         }
 
 
