@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
+using System.Security.Cryptography;
 
 namespace StegoApp
 {
@@ -14,6 +15,8 @@ namespace StegoApp
         public string FullName { get; }
         public string Nickname { get; }
         public string CertSerial { get; }
+        
+        // Actually salt + hash encoded in base64
         public string PasswHash { get; }
         public string UnreadFile { get; }
 
@@ -21,6 +24,9 @@ namespace StegoApp
 
         const string XML_PATH = "users.xml";
         const string XML_SCHEMA = "users.xsd";
+        const int SALT_SIZE = 32;
+        const int HASH_SIZE = 20;
+        const int HASH_ITERATIONS = 10000;
 
         User(string fullName, string nickname, string certSerial, string passwHash,string unreadFile)
         {
@@ -97,6 +103,62 @@ namespace StegoApp
 
 
         }
+
+        public enum AuthStatus {Succesful,InvalidUsername,InvalidPassword};
+
+        public static AuthStatus AuthenticateUser(string username, string password, out User user)
+        {
+
+            //Todo: Implement using SecureString
+            user = null;
+            User retrievedUser;
+            if(!AllUsers.TryGetValue(username, out retrievedUser))
+                return AuthStatus.InvalidUsername;
+
+            byte[] salt = RetrieveSalt(retrievedUser);
+            string hash = HashPassword(password, salt);
+
+            if (hash != retrievedUser.PasswHash)
+                return AuthStatus.InvalidPassword;
+
+            user = retrievedUser;
+
+            return AuthStatus.Succesful;
+
+        }
+
+        static byte[] RetrieveSalt(User user)
+        {
+
+            byte[] saltWithHash = Convert.FromBase64String(user.PasswHash);
+
+            byte[] salt = new byte[SALT_SIZE];
+            Array.Copy(saltWithHash, 0, salt, 0, salt.Length);
+
+            return salt;
+        }
+
+        //Concatenates hash and salt, returns that in Base64 encoding
+        static string HashPassword(string password,byte[] salt)
+        {
+
+            byte[] passwBytes = Encoding.UTF8.GetBytes(password);
+            byte[] saltWithHash = new byte[SALT_SIZE + HASH_SIZE];
+            byte[] hash;
+
+            using (Rfc2898DeriveBytes deriveObject = new Rfc2898DeriveBytes(passwBytes, salt, HASH_ITERATIONS))
+            {
+
+               hash = deriveObject.GetBytes(HASH_SIZE);
+
+            }
+
+            salt.CopyTo(saltWithHash, 0);
+            hash.CopyTo(saltWithHash, SALT_SIZE);
+
+            return Convert.ToBase64String(saltWithHash);
+        }
+
 
     }
 }
