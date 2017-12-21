@@ -23,9 +23,9 @@
 
         <Label Grid.Row="0" Grid.Column="0" Content="Username" VerticalAlignment="Center"  HorizontalContentAlignment="Center"></Label>
         <Label Grid.Row="1" Grid.Column="0" Content="Password" VerticalAlignment="Center"  HorizontalContentAlignment="Center"></Label>
-        <TextBox x:Name="usernameTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"></TextBox>
-        <PasswordBox x:Name="passwordTextBox" Grid.Row ="1" Grid.Column="1" VerticalContentAlignment="Center"></PasswordBox>
-        <Button Grid.Row="2" Grid.Column="1" Content="Login" Margin="0,5,0,0" Click="LoginButtonClick"></Button>
+        <TextBox x:Name="usernameTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" KeyDown="OnEnterPressed"></TextBox>
+        <PasswordBox x:Name="passwordTextBox" Grid.Row ="1" Grid.Column="1" VerticalContentAlignment="Center" KeyDown="OnEnterPressed"></PasswordBox>
+        <Button Grid.Row="2" Grid.Column="1" Content="Login" Margin="0,5,0,0" Click="OnLoginButtonClick"></Button>
  
     </Grid>
 </Window>

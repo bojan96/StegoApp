@@ -23,38 +23,13 @@ namespace StegoApp
             InitializeComponent();
         }
 
-        void LoginButtonClick(object sender, RoutedEventArgs evArgs)
+        void OnLoginButtonClick(object sender, RoutedEventArgs evArgs)
         {
 
-            bool validCred = CheckCredentials(usernameTextBox.Text, passwordTextBox.Password);
+            Login();
 
-            if (!validCred)
-                return;
-
-            User user;
-            var status = User.AuthenticateUser(usernameTextBox.Text, passwordTextBox.Password, out user);
-
-            bool openMainWindow = (status == User.AuthStatus.Succesful);
-
-            if (status == User.AuthStatus.InvalidUsername)
-                MessageBox.Show("Invalid username", "Invalid username", MessageBoxButton.OK);
-            else if (status == User.AuthStatus.InvalidPassword)
-                MessageBox.Show("Invalid password", "Invalid password", MessageBoxButton.OK);
-
-
-            if(openMainWindow)
-            {
-
-                MainWindow mainWin = new MainWindow(user);
-                mainWin.Show();
-                Close();
-
-            }
-                
         }
 
-
-        
         bool CheckCredentials(string username,string password)
         {
 
@@ -76,5 +51,44 @@ namespace StegoApp
 
             return true;
         }
+
+        void OnEnterPressed(object sender,KeyEventArgs evArgs)
+        {
+
+            if (evArgs.Key == Key.Enter)
+                Login();
+
+        }
+
+        void Login()
+        {
+
+            bool validCred = CheckCredentials(usernameTextBox.Text, passwordTextBox.Password);
+
+            if (!validCred)
+                return;
+
+            User user;
+            var status = User.AuthenticateUser(usernameTextBox.Text, passwordTextBox.Password, out user);
+
+            bool openMainWindow = (status == User.AuthStatus.Succesful);
+
+            if (status == User.AuthStatus.InvalidUsername)
+                MessageBox.Show("Invalid username", "Invalid username", MessageBoxButton.OK);
+            else if (status == User.AuthStatus.InvalidPassword)
+                MessageBox.Show("Invalid password", "Invalid password", MessageBoxButton.OK);
+
+
+            if (openMainWindow)
+            {
+
+                MainWindow mainWin = new MainWindow(user);
+                mainWin.Show();
+                Close();
+
+            }
+
+        }
+
     }
 }
