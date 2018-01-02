@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Crypto.Parameters;
+
 
 namespace StegoApp
 {
@@ -143,6 +147,42 @@ namespace StegoApp
         {
 
             return rsa.VerifyData(data, signature, HASH_ALGORITHM, RSA_SIGNATURE_PADDING);
+
+        }
+
+        // Also checks if there is RSA private key
+        public static RSA ReadPemFile(string path)
+        {
+
+            var lines = File.ReadLines(path);
+
+            if (lines.First() != "-----BEGIN RSA PRIVATE KEY-----"
+                || lines.Last() != "-----END RSA PRIVATE KEY-----")
+                throw new FileFormatException("File is not valid pem file or does not contain rsa private key");
+
+            using (StreamReader streamReader = new StreamReader(path))
+            {
+
+                PemReader pemReader = new PemReader(streamReader);
+                var keyPair = (AsymmetricCipherKeyPair)pemReader.ReadObject();
+                var privKey = (RsaPrivateCrtKeyParameters)keyPair.Private;
+                var rsaParam = new RSAParameters();
+
+                rsaParam.Exponent = privKey.PublicExponent.ToByteArrayUnsigned();
+                rsaParam.D = privKey.Exponent.ToByteArrayUnsigned();
+                rsaParam.DP = privKey.DP.ToByteArrayUnsigned();
+                rsaParam.DQ = privKey.DQ.ToByteArrayUnsigned();
+                rsaParam.InverseQ = privKey.QInv.ToByteArrayUnsigned();
+                rsaParam.P = privKey.P.ToByteArrayUnsigned();
+                rsaParam.Q = privKey.Q.ToByteArrayUnsigned();
+                rsaParam.Modulus = privKey.Modulus.ToByteArrayUnsigned();
+
+                RSA rsa = RSA.Create();
+                rsa.ImportParameters(rsaParam);
+
+                return rsa;
+
+            }
 
         }
 
