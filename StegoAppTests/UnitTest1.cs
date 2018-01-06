@@ -105,5 +105,17 @@ namespace StegoApp.Tests
 
         }
 
+        [TestMethod()]
+        public void TestSteganography()
+        {
+
+            var data = Enumerable.Repeat<byte>(0, 189302);
+            Steganography.Embed("testImage.png", "test.png", data.ToArray());
+            var embededData = Steganography.Extract("test.png");
+
+            Assert.IsTrue(Enumerable.SequenceEqual(data, embededData));
+
+        }
+
     }
 }
