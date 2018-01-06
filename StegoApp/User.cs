@@ -20,7 +20,7 @@ namespace StegoApp
         public string PasswHash { get; }
         public string UnreadFile { get; }
 
-        public static Dictionary<string, User> AllUsers { get; private set; } = null;
+        public static IReadOnlyDictionary<string, User> AllUsers { get; private set; } = null;
 
         const string XML_PATH = "users.xml";
         const string XML_SCHEMA = "users.xsd";
