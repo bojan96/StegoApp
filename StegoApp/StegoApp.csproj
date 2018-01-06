@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="Message.cs" />
     <Compile Include="Steganography.cs" />
+    <Compile Include="UnreadList.cs" />
     <Compile Include="User.cs" />
     <Page Include="LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
