@@ -12,33 +12,33 @@ namespace StegoApp
     {
 
         // Key is path to image, Value is number of 
-        // times message is written to image
-        Dictionary<string, int> imageList;
+        // times image was overwritten 
+        Dictionary<string, int> imageDict;
 
         public UnreadList(string filename)
         {
 
             var imagePaths = File.ReadAllLines(filename);
-            imageList = new Dictionary<string, int>();
+            imageDict = new Dictionary<string, int>();
 
             foreach (var imagePath in imagePaths)
             {
 
-                if (! imageList.ContainsKey(imagePath))
-                    imageList.Add(imagePath, 1);
+                if (! imageDict.ContainsKey(imagePath))
+                    imageDict.Add(imagePath, 1);
                 else
-                    ++imageList[imagePath];
+                    ++imageDict[imagePath];
 
             }
 
         }
 
-        public IReadOnlyDictionary<string, int> Images
+        public IReadOnlyCollection<PathCountPair> Images
         {
 
             get
             {
-                return imageList;
+                return imageDict.Select(pair => new PathCountPair(pair.Key, pair.Value)).ToList();
             }
 
         }
@@ -46,28 +46,61 @@ namespace StegoApp
         public void Add(string path)
         {
 
-            if (! imageList.ContainsKey(path))
-                imageList.Add(path, 1);
+            if (! imageDict.ContainsKey(path))
+                imageDict.Add(path, 1);
             else
-                ++imageList[path];
+                ++imageDict[path];
 
         }
 
+        public void Remove(string path)
+        {
+
+            imageDict.Remove(path);
+
+        }
         public void Write(string filename)
         {
 
             using (StreamWriter file = new StreamWriter(filename))
             {
-                foreach (var imagePath in imageList.Keys)
+                foreach (var imagePath in imageDict.Keys)
                 {
 
-                    int count = imageList[imagePath];
+                    int count = imageDict[imagePath];
 
                     for(int i = 0; i < count; ++i)
                         file.WriteLine(imagePath);
 
                 }
                 
+            }
+
+        }
+
+        public class PathCountPair
+        {
+
+            // path - image path
+            // count - number of times image was overwritten
+            public PathCountPair(string path, int count)
+            {
+
+                Path = path;
+                Count = count;
+
+            }
+
+            public string Path
+            {
+                get;
+            }
+
+            public int Count
+            {
+
+                get;
+
             }
 
         }
