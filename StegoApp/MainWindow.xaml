@@ -25,8 +25,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    
-                    <Label Grid.Row="0" Content="Message details:" VerticalAlignment="Center"></Label>
+
+                    <Label Grid.Row="0" Content="Message details:" VerticalAlignment="Center"/>
                     <Border Grid.Row="1" BorderThickness="1,1,1,1" BorderBrush="Black">
 
                         <Grid Margin="5">
@@ -42,23 +42,22 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Grid.Row="0" Grid.Column="0"  Content="To:" HorizontalAlignment="Right"></Label>
-                            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center"></TextBox>
-                            <Button Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Content="Find" BorderThickness="2" BorderBrush="#FF0078D7" Background="#FFE1E1E1"></Button>
-                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="1"></StackPanel>
-                            <Label Grid.Row="2" Grid.Column="0" Content="Image path:"></Label>
-                            <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center"></TextBox>
-                            <Button Grid.Row="2" Grid.Column="2" Margin="5,0,0,0" Content="Select image" BorderThickness="2" BorderBrush="#FF0078D7" Background="#FFE1E1E1"></Button>
+                            <Label Grid.Row="0" Grid.Column="0"  Content="To:" HorizontalAlignment="Right"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                            <Button Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Content="Find" Style="{StaticResource ButtonStyle}"/>
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="1"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Image path:"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                            <Button Grid.Row="2" Grid.Column="2" Margin="5,0,0,0" Content="Select image" Style="{StaticResource ButtonStyle}"/>
                         </Grid>
 
                     </Border>
-                    <Label Grid.Row="2" Content="Selected image:"></Label>
-                    <Image Grid.Row="3" Width="300" Height="150" Source="Placeholder.bmp"></Image>
-                    <Button Grid.Row="4" Content="Post message"></Button>
-
+                    <Label Grid.Row="2" Content="Selected image:"/>
+                    <Image Grid.Row="3" Width="300" Height="150" Source="Placeholder.bmp"/>
+                    <Button Grid.Row="4" Content="Post message"/>
                 </Grid>
                 
-                <TextBox Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True"></TextBox>
+                <TextBox Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True"/>
             </Grid>
 
         </TabItem>

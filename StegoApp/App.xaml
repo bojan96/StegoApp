@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:StegoApp"
              Startup="OnAppStart">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="BorderBrush" Value="#FF0078D7"/>
+                <Setter Property="Background" Value="#FFE1E1E1"/>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
