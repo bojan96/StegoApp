@@ -69,6 +69,7 @@
     <Compile Include="Steganography.cs" />
     <Compile Include="UnreadList.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserConverter.cs" />
     <Compile Include="UserSelectWindow.xaml.cs">
       <DependentUpon>UserSelectWindow.xaml</DependentUpon>
     </Compile>
