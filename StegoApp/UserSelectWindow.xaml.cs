@@ -14,14 +14,25 @@ using System.Windows.Shapes;
 
 namespace StegoApp
 {
-    /// <summary>
-    /// Interaction logic for UserSelectWindow.xaml
-    /// </summary>
+
     public partial class UserSelectWindow : Window
     {
-        public UserSelectWindow()
+
+        private User currentUser;
+
+        public UserSelectWindow(User currentUser)
         {
+
+            this.currentUser = currentUser;
             InitializeComponent();
+            
+        }
+
+        void FilterUsers(object sender, FilterEventArgs evArgs)
+        {
+
+            evArgs.Accepted = !currentUser.Equals(evArgs.Item);
+
         }
     }
 }
