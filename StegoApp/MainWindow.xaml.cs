@@ -27,5 +27,16 @@ namespace StegoApp
             currentUser = user;
 
         }
+
+        void SelectClicked(object sender, RoutedEventArgs evArgs)
+        {
+
+            var userSelectWin = new UserSelectWindow(currentUser);
+            bool? result = userSelectWin.ShowDialog();
+
+            if (result == true)
+                toTextBox.Text = userSelectWin.SelectedUser.Nickname;
+
+        }
     }
 }

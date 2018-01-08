@@ -42,8 +42,9 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Grid.Row="0" Grid.Column="0"  Content="To:" HorizontalAlignment="Right"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"/>
-                            <Button Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Content="Find" Style="{StaticResource ButtonStyle}"/>
+                            <TextBox x:Name="toTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"/>
+                            <Button Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Content="Select" Style="{StaticResource ButtonStyle}" 
+                                    Click="SelectClicked"/>
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="1"/>
                             <Label Grid.Row="2" Grid.Column="0" Content="Image path:"/>
                             <TextBox Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center"/>
