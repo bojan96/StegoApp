@@ -121,11 +121,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="pic.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="users.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
