@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:StegoApp"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="SelectUser" Height="200" Width="200" ResizeMode="NoResize">
+        Title="Select user" Height="200" Width="200" ResizeMode="NoResize">
 
     <Window.Resources>
         <ResourceDictionary>
