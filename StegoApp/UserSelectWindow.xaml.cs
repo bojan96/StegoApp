@@ -28,11 +28,43 @@ namespace StegoApp
             
         }
 
+        public User SelectedUser
+        {
+
+            get;
+            private set;
+
+        }
+
         void FilterUsers(object sender, FilterEventArgs evArgs)
         {
 
             evArgs.Accepted = !currentUser.Equals(evArgs.Item);
 
         }
+
+        void CancelClicked(object sender, RoutedEventArgs evArgs)
+        {
+
+            ExitDialog(false);
+
+        }
+
+        void OKClicked(object sender, RoutedEventArgs evArgs)
+        {
+
+            SelectedUser = (User)listBox.SelectedItem;
+            ExitDialog(true);
+
+        }
+
+        void ExitDialog(bool result)
+        {
+
+            DialogResult = true;
+            Close();
+
+        }
+
     }
 }

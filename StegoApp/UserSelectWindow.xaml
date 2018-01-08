@@ -25,7 +25,7 @@
             <RowDefinition Height="{StaticResource BttnH}"/>
         </Grid.RowDefinitions>
         
-        <ListBox Grid.Row="0" ItemsSource="{Binding Source={StaticResource UserCollection}}">
+        <ListBox x:Name="listBox"  Grid.Row="0" ItemsSource="{Binding Source={StaticResource UserCollection}}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label Content="{Binding Converter={StaticResource UserConverter}}"/>
@@ -35,8 +35,9 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
             <Button Width="{StaticResource BttnW}" Style="{StaticResource ButtonStyle}" Content="Ok" 
-                    Margin="0,0,5,0"/>
-            <Button Width="{StaticResource BttnW}" Style="{StaticResource ButtonStyle}" Content="Cancel"/>
+                    Margin="0,0,5,0" Click="OKClicked" IsDefault="True"/>
+            <Button Width="{StaticResource BttnW}" Style="{StaticResource ButtonStyle}" Content="Cancel"
+                    Click="CancelClicked" IsCancel="True"/>
         </StackPanel>
     </Grid>
 
