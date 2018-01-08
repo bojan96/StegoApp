@@ -110,8 +110,8 @@ namespace StegoApp.Tests
         {
 
             var data = Enumerable.Repeat<byte>(0, 189302);
-            Steganography.Embed("testImage.png", "test.png", data.ToArray());
-            var embededData = Steganography.Extract("test.png");
+            Steganography.Embed("testInput.png", "testOutput.png", data.ToArray());
+            var embededData = Steganography.Extract("testOutput.png");
 
             Assert.IsTrue(Enumerable.SequenceEqual(data, embededData));
 
