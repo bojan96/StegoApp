@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,15 +29,30 @@ namespace StegoApp
 
         }
 
-        void SelectClicked(object sender, RoutedEventArgs evArgs)
+        void SelectUserClicked(object sender, RoutedEventArgs evArgs)
         {
 
             var userSelectWin = new UserSelectWindow(currentUser);
-            bool? result = userSelectWin.ShowDialog();
+            var result = userSelectWin.ShowDialog();
 
             if (result == true)
                 toTextBox.Text = userSelectWin.SelectedUser.Nickname;
 
         }
+
+        void SelectImageClicked(object sender, RoutedEventArgs evArgs)
+        {
+
+            var fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Image files|*.png;*.bmp";
+
+            var result = fileDialog.ShowDialog();
+
+            if (result == true)
+                imageTextBox.Text = fileDialog.FileName;
+
+
+        }
+
     }
 }
