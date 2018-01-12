@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace StegoApp
     {
 
         User currentUser;
+        string currImagePath = "";
 
         public MainWindow(User user)
         {
@@ -49,9 +51,77 @@ namespace StegoApp
             var result = fileDialog.ShowDialog();
 
             if (result == true)
-                imageTextBox.Text = fileDialog.FileName;
+                currImagePath = imageTextBox.Text = fileDialog.FileName;
 
+        }
 
+        void OnImageTextBoxTextChanged(object sender, TextChangedEventArgs evArgs)
+        {
+
+            if (imageTextBox.IsKeyboardFocused)
+                return;
+
+            ChangeImage();
+
+        }
+
+        // Keyboard lost focus
+        void OnImageTextBoxLostFocus(object sender, RoutedEventArgs evArgs)
+        {
+
+            if(currImagePath != imageTextBox.Text)
+                ChangeImage();
+
+        }
+
+        // Keyboard got focus
+        void OnImageTextBoxGotFocus(object sender, RoutedEventArgs evArgs)
+        {
+
+            currImagePath = imageTextBox.Text;
+
+        }
+
+        void ChangeImage()
+        {
+
+            try
+            {
+
+                if (!Steganography.ValidImageFormat(imageTextBox.Text))
+                {
+
+                    SetPlaceholderImage();
+                    MessageBox.Show("Format not supported", "Format not supported",
+                        MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    return;
+
+                }
+
+                var imageUri = new Uri(imageTextBox.Text);
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = imageUri;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.EndInit();
+                imageControl.Source = image;
+
+            }
+            catch (IOException)
+            {
+
+                SetPlaceholderImage();
+                MessageBox.Show("Could not open file", "Could not open file", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+
+        }
+
+        void SetPlaceholderImage()
+        {
+            imageControl.Source = new BitmapImage(new Uri("Placeholder.bmp", UriKind.Relative));
         }
 
     }

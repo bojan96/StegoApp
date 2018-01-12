@@ -37,7 +37,8 @@
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
+                                <!-- Can not have fixed width of the textboxes using Auto, gotta hardcode-->
+                                <ColumnDefinition Width="137"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
@@ -47,13 +48,16 @@
                                     Click="SelectUserClicked"/>
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="1"/>
                             <Label Grid.Row="2" Grid.Column="0" Content="Image path:"/>
-                            <TextBox x:Name="imageTextBox" Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="imageTextBox" Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" 
+                                     TextChanged="OnImageTextBoxTextChanged"
+                                     LostKeyboardFocus="OnImageTextBoxLostFocus"
+                                     GotKeyboardFocus="OnImageTextBoxGotFocus"/>
                             <Button Grid.Row="2" Grid.Column="2" Margin="5,0,0,0" Content="Select image" Style="{StaticResource ButtonStyle}"
                                     Click="SelectImageClicked"/>
                         </Grid>
                     </Border>
                     <Label Grid.Row="2" Content="Selected image:"/>
-                    <Image Grid.Row="3" Width="300" Source="Placeholder.bmp"/>
+                    <Image x:Name="imageControl" Grid.Row="3" Width="300" Source="Placeholder.bmp"/>
                     <Button Grid.Row="4" Margin="10" Content="Post message"/>
                 </Grid>
                 <TextBox Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True"/>
