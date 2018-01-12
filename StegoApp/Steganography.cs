@@ -115,12 +115,26 @@ namespace StegoApp
         public static bool ValidImageFormat(string path)
         {
 
-            using (var image = new Bitmap(path))
+            try
             {
 
-                var format = image.RawFormat;
-                return format.Equals(ImageFormat.Bmp) || format.Equals(ImageFormat.Png);
+                using (var fileStream = new FileStream(path, FileMode.Open))
+                using (var image = new Bitmap(fileStream))
+                {
 
+                    var format = image.RawFormat;
+                    return format.Equals(ImageFormat.Bmp) || format.Equals(ImageFormat.Png);
+
+                }
+
+            }
+            catch(ArgumentException)
+            {
+                return false;
+            }
+            catch
+            {
+                throw new IOException($"Could not open file: {path}");
             }
 
         }
