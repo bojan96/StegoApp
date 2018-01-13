@@ -8,101 +8,114 @@ using System.IO;
 
 namespace StegoApp
 {
-    class UnreadList
+    public class UnreadList
     {
 
-        // Key is path to image, Value is number of 
-        // times image was overwritten 
-        Dictionary<string, int> imageDict;
+        Dictionary<string, Record> unreadList = new Dictionary<string, Record>();
 
-        public UnreadList(string filename)
+        public UnreadList(string filename) => ParseCsv(filename);
+        
+        void ParseCsv(string filename)
         {
 
-            var imagePaths = File.ReadAllLines(filename);
-            imageDict = new Dictionary<string, int>();
+            var csvLines = File.ReadAllLines(filename);
 
-            foreach (var imagePath in imagePaths)
+            foreach(var line in csvLines)
             {
 
-                if (! imageDict.ContainsKey(imagePath))
-                    imageDict.Add(imagePath, 1);
-                else
-                    ++imageDict[imagePath];
+                var record = ParseCsvLine(line);
+                unreadList.Add(record.Path, record);
 
             }
 
         }
 
-        public IReadOnlyCollection<PathCountPair> Images
+        Record ParseCsvLine(string line)
         {
 
-            get
-            {
-                return imageDict.Select(pair => new PathCountPair(pair.Key, pair.Value)).ToList();
-            }
+            var values = line.Split(new char[] { ',' }, 3);
+
+            if (values.Length < 3)
+                throw new FileFormatException("Invalid unread file");
+
+            var record = new Record(values[0], values[1], 
+                values[2] == "overwrite" ? true : false);
+           
+            return record;
 
         }
 
-        public void Add(string path)
+        public IReadOnlyDictionary<string, Record> Messages
         {
 
-            if (! imageDict.ContainsKey(path))
-                imageDict.Add(path, 1);
+            get => unreadList;
+
+        }
+
+        public void Add(string path, string hash)
+        {
+
+            if (!unreadList.ContainsKey(path))
+                unreadList.Add(path, new Record(path, hash, false));
             else
-                ++imageDict[path];
+                unreadList[path] = new Record(path, hash, true);
 
         }
 
-        public void Remove(string path)
-        {
+        public void Remove(string path) => unreadList.Remove(path);
 
-            imageDict.Remove(path);
-
-        }
+       
         public void Write(string filename)
         {
 
-            using (StreamWriter file = new StreamWriter(filename))
-            {
-                foreach (var imagePath in imageDict.Keys)
-                {
+            var lines = new List<string>();
 
-                    int count = imageDict[imagePath];
+            foreach(var record in unreadList)
+                lines.Add(GetLine(record.Value));
 
-                    for(int i = 0; i < count; ++i)
-                        file.WriteLine(imagePath);
-
-                }
-                
-            }
+            File.WriteAllLines(filename, lines.ToArray());
 
         }
 
-        public class PathCountPair
+        string GetLine(Record record) => $"{record.Path},{record.Hash}," +
+            $"{(record.Overwrite == true ? "overwrite" : "")}";
+        
+        public class Record
         {
 
             // path - image path
             // count - number of times image was overwritten
-            public PathCountPair(string path, int count)
+            public Record(string path, string hash, bool overwrite)
             {
 
                 Path = path;
-                Count = count;
+                Hash = hash;
+                Overwrite = overwrite;
 
             }
 
             public string Path
             {
+
                 get;
+
             }
 
-            public int Count
+            public string Hash
             {
 
                 get;
 
             }
 
+            // Did this message overwrote some message
+            public bool Overwrite
+            {
+
+                get;
+
+            }
+   
         }
          
     }
