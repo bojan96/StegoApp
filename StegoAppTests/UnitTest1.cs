@@ -117,5 +117,29 @@ namespace StegoApp.Tests
 
         }
 
+        [TestMethod()]
+        public void TestUnreadList()
+        {
+
+            UnreadList unreadList = new UnreadList("Unread.txt");
+            unreadList.Add("Path1", "Hash1");
+            unreadList.Add("Path2", "Hash2");
+            unreadList.Write("Unread1.txt");
+
+            UnreadList unreadList2 = new UnreadList("Unread1.txt");
+
+            // Testing parsing and writing to file
+            Assert.IsTrue(unreadList.Messages.Keys.SequenceEqual
+                (unreadList.Messages.Keys));
+            Assert.IsTrue(unreadList.Messages.Values.SequenceEqual
+                (unreadList2.Messages.Values));
+
+            unreadList.Remove("Path1");
+            unreadList.Remove("Path2");
+            Assert.AreEqual(unreadList.Messages.Count, 1);
+            Assert.IsTrue(unreadList.Messages.First().Key == "Path");
+
+        }
+
     }
 }
