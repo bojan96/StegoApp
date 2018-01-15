@@ -141,5 +141,21 @@ namespace StegoApp.Tests
 
         }
 
+        [TestMethod()]
+        public void TestCertValidation()
+        {
+
+            User.LoadUsers();
+            var mmUser = User.AllUsers["mm"];
+            var jjUser = User.AllUsers["jj"];
+
+            var mmCert = CryptoService.FindCertificate(mmUser);
+            var jjCert = CryptoService.FindCertificate(jjUser);
+
+            Assert.IsTrue(CryptoService.ValidateCertificate(mmCert));
+            Assert.IsFalse(CryptoService.ValidateCertificate(jjCert));
+
+        }
+
     }
 }
