@@ -186,5 +186,40 @@ namespace StegoApp
 
         }
 
+        public static bool ValidateCertificate(X509Certificate2 cert)
+        {
+
+            using(var rootCert = GetRootCert())
+            using (var chain = new X509Chain())
+            {
+
+                chain.ChainPolicy.ExtraStore.Add(rootCert);
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                var valid = chain.Build(cert);
+
+                return valid;
+            }
+
+        }
+
+        static X509Certificate2 GetRootCert()
+        {
+
+            using (var store = new X509Store(StoreName.Root, StoreLocation.CurrentUser))
+            {
+
+                store.Open(OpenFlags.ReadOnly);
+                var certColl = store.Certificates.Find(X509FindType.FindBySubjectDistinguishedName,
+                    CA_DN, false);
+
+                if (certColl.Count != 1)
+                    throw new InvalidOperationException("Valid root ca does not exist");
+
+                return certColl[0];
+
+            }
+
+        }
+
     }
 }
