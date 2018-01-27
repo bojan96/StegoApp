@@ -152,5 +152,19 @@ namespace StegoApp.Tests
 
         }
 
+        [TestMethod()]
+        public void TestCombineArray()
+        {
+
+            var expectedArr1 = new byte[] { 1, 2, 3 };
+            var expectedArr2 = new byte[] { 4, 5, 6 };
+            byte[] combArr = Utility.CombineByteArrays(expectedArr1, expectedArr2);
+            (byte[] array1, byte[] array2) = Utility.SplitArray(combArr);
+
+            Assert.IsTrue(expectedArr1.SequenceEqual(array1));
+            Assert.IsTrue(expectedArr2.SequenceEqual(array2));
+
+        }
+
     }
 }
