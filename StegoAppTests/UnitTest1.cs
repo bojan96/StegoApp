@@ -8,6 +8,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace StegoApp.Tests
 {
@@ -50,12 +51,13 @@ namespace StegoApp.Tests
             var symmKey = CryptoService.GenerateSymmetricKey();
             var iV = CryptoService.GenerateIV();
 
-            string data = "My Message";
+            string inStr = "My Message";
 
-            var encData = CryptoService.EncryptData(data, symmKey, iV);
+            var encData = CryptoService.EncryptData(Encoding.UTF8.GetBytes(inStr), symmKey, iV);
             var decData = CryptoService.DecryptData(encData, symmKey, iV);
+            string decStr = Encoding.UTF8.GetString(decData);
 
-            Assert.AreEqual(data, decData);
+            Assert.AreEqual(inStr, decStr);
 
         }
 
@@ -121,23 +123,16 @@ namespace StegoApp.Tests
         public void TestUnreadList()
         {
 
+            //Contains "Path"
             UnreadList unreadList = new UnreadList("Unread.txt");
             unreadList.Add("Path1", "Hash1");
             unreadList.Add("Path2", "Hash2");
             unreadList.Write("Unread1.txt");
-
-            UnreadList unreadList2 = new UnreadList("Unread1.txt");
-
-            // Testing parsing and writing to file
-            Assert.IsTrue(unreadList.Messages.Keys.SequenceEqual
-                (unreadList.Messages.Keys));
-            Assert.IsTrue(unreadList.Messages.Values.SequenceEqual
-                (unreadList2.Messages.Values));
-
+            
             unreadList.Remove("Path1");
             unreadList.Remove("Path2");
-            Assert.AreEqual(unreadList.Messages.Count, 1);
-            Assert.IsTrue(unreadList.Messages.First().Key == "Path");
+
+            Assert.AreEqual("Path", unreadList.Messages.First().Key);
 
         }
 
