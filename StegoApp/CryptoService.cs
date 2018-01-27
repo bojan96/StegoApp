@@ -221,7 +221,6 @@ namespace StegoApp
 
         }
 
-
         public static string HashFile(string filename)
         {
 
@@ -233,6 +232,13 @@ namespace StegoApp
                 
             }
                 
+        }
+
+        public static bool HashValidation(string filename, string hash)
+        {
+
+            return HashFile(filename) == hash;
+
         }
 
     }
