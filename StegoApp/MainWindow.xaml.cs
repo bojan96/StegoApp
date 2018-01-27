@@ -15,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Security.Cryptography.X509Certificates;
+using static StegoApp.UnreadList;
+using System.Collections.ObjectModel;
 
 namespace StegoApp
 {
@@ -24,12 +26,17 @@ namespace StegoApp
 
         User currentUser;
         string currImagePath = "";
+        UnreadList unreadList;
+        ObservableCollection<Record> recordCollection;
 
         public MainWindow(User user)
         {
 
             InitializeComponent();
             currentUser = user;
+            unreadList = new UnreadList(currentUser.UnreadFile);
+            msgListView.ItemsSource = recordCollection =
+                new ObservableCollection<Record>(unreadList.Messages.Values);
 
         }
 
@@ -128,7 +135,7 @@ namespace StegoApp
 
         void OnPostMsgButtonClick(object sender, RoutedEventArgs e)
         {
-            
+
 
             User toUser = User.AllUsers[toTextBox.Text];
 
@@ -180,9 +187,7 @@ namespace StegoApp
                     catch (FileFormatException)
                     {
 
-                        MessageBox.Show("Invalid pem file", "Invalid pem file",
-                            MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
+                        ExclamationMsgBox("Invalid pem file", "Invalid pem file");
                         return;
 
                     }
@@ -204,12 +209,12 @@ namespace StegoApp
 
                     }
                     //TODO: Implement separate exception for small image
-                    catch(FileFormatException)
+                    catch (FileFormatException)
                     {
 
-                        MessageBox.Show("Image is too small for given message", "Small image", 
+                        MessageBox.Show("Image is too small for given message", "Small image",
                             MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
+                        return;
                     }
 
                     string hash = CryptoService.HashFile(imagePath);
@@ -242,6 +247,85 @@ namespace StegoApp
             bool? result = fileDialog.ShowDialog();
 
             return result == true ? CryptoService.ReadPemFile(fileDialog.FileName) : null;
+
+        }
+
+        void OnItemDoubleClick(object sender, RoutedEventArgs evARgs)
+        {
+
+            var msgRecord = (Record)msgListView.SelectedItem;
+
+            bool exist = File.Exists(msgRecord.Path);
+
+            if (!exist)
+            {
+
+                ExclamationMsgBox("Message does not exist", "Message does not exist");
+                return;
+
+            }
+
+            bool hashResult = CryptoService.HashValidation(msgRecord.Path, msgRecord.Hash);
+
+            if (!hashResult)
+            {
+
+                ExclamationMsgBox("Message altered", "Message altered");
+                return;
+
+            }
+
+            byte[] extractedData = Steganography.Extract(msgRecord.Path);
+            (byte[] envelope, byte[] encData) = Utility.SplitArray(extractedData);
+            byte[] symmKey;
+            byte[] iV;
+
+            try
+            {
+                using (RSA userPrivateKey = PrivateKeyDialog())
+                    (symmKey, iV) = CryptoService.DecryptSymmetricData(envelope, userPrivateKey);
+
+
+            }
+            catch (FileFormatException)
+            {
+
+                //TODO: avoid code duplication
+                ExclamationMsgBox("Invalid pem file", "Invalid pem file");
+                return;
+
+            }
+
+            byte[] decData = CryptoService.DecryptData(encData, symmKey, iV);
+
+            (byte[] msgBytes, byte[] signature) = Utility.SplitArray(decData);
+            (string message, User fromUser, DateTime dateTime) =
+                Message.ParseXml(Encoding.UTF8.GetString(msgBytes));
+
+            RSA fromUserPublicKey = CryptoService.FindCertificate(fromUser).GetRSAPublicKey();
+            bool verificationResult = CryptoService.VerifyData(msgBytes, signature, fromUserPublicKey);
+
+            if (!verificationResult)
+            {
+
+                ExclamationMsgBox("Signature verification failed", "Signature verification failed");
+                return;
+
+            }
+
+            unreadList.Remove(msgRecord.Path);
+            recordCollection.Remove(msgRecord);
+            File.Delete(msgRecord.Path);
+
+            ShowMessageWindow(message, fromUser, dateTime);
+
+        }
+
+        void ShowMessageWindow(string message, User fromUser, DateTime dateTime)
+        {
+
+            var messageWin= new MessageWindow(fromUser, message, dateTime);
+            messageWin.ShowDialog();
 
         }
 

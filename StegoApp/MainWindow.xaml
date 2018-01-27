@@ -8,7 +8,24 @@
         Title="StegoApp" Height="400" Width="800">
 
     <TabControl>
-        <TabItem Header="Inbox"></TabItem>
+        <TabItem Header="Inbox">
+            <ListView x:Name="msgListView">
+                <ListView.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="ListViewItem">
+                            <EventSetter Event="MouseDoubleClick" Handler="OnItemDoubleClick"/>
+                        </Style>
+                    </ResourceDictionary>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path=Path}" Width="Auto"/>
+                        <GridViewColumn Header="Hash" DisplayMemberBinding="{Binding Hash}" Width="Auto"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            
+        </TabItem>
         <TabItem Header="New message">
 
             <Grid>
