@@ -221,5 +221,19 @@ namespace StegoApp
 
         }
 
+
+        public static string HashFile(string filename)
+        {
+
+            using(SHA256 sha = SHA256.Create())
+            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            {
+
+                return Convert.ToBase64String(sha.ComputeHash(fileStream));
+                
+            }
+                
+        }
+
     }
 }
