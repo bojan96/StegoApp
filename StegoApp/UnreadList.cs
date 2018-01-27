@@ -64,7 +64,6 @@ namespace StegoApp
 
         public void Remove(string path) => unreadList.Remove(path);
 
-       
         public void Write(string filename)
         {
 
@@ -84,7 +83,8 @@ namespace StegoApp
         {
 
             // path - image path
-            // count - number of times image was overwritten
+            // hash - image hash
+            // overwrite - Did this message overwrote some message
             public Record(string path, string hash, bool overwrite)
             {
 
@@ -108,7 +108,6 @@ namespace StegoApp
 
             }
 
-            // Did this message overwrote some message
             public bool Overwrite
             {
 
