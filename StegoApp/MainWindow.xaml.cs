@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,10 +14,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Security.Cryptography.X509Certificates;
 
 namespace StegoApp
 {
-    
+
     public partial class MainWindow : Window
     {
 
@@ -35,7 +37,7 @@ namespace StegoApp
         {
 
             var userSelectWin = new UserSelectWindow(currentUser);
-            var result = userSelectWin.ShowDialog();
+            bool? result = userSelectWin.ShowDialog();
 
             if (result == true)
                 toTextBox.Text = userSelectWin.SelectedUser.Nickname;
@@ -48,7 +50,7 @@ namespace StegoApp
             var fileDialog = new OpenFileDialog();
             fileDialog.Filter = "Image files|*.png;*.bmp";
 
-            var result = fileDialog.ShowDialog();
+            bool? result = fileDialog.ShowDialog();
 
             if (result == true)
                 currImagePath = imageTextBox.Text = fileDialog.FileName;
@@ -69,7 +71,7 @@ namespace StegoApp
         void OnImageTextBoxLostFocus(object sender, RoutedEventArgs evArgs)
         {
 
-            if(currImagePath != imageTextBox.Text)
+            if (currImagePath != imageTextBox.Text)
                 ChangeImage();
 
         }
@@ -112,7 +114,7 @@ namespace StegoApp
             {
 
                 SetPlaceholderImage();
-                MessageBox.Show("Could not open file", "Could not open file", 
+                MessageBox.Show("Could not open file", "Could not open file",
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
@@ -124,5 +126,125 @@ namespace StegoApp
             imageControl.Source = new BitmapImage(new Uri("Placeholder.bmp", UriKind.Relative));
         }
 
+        void OnPostMsgButtonClick(object sender, RoutedEventArgs e)
+        {
+            
+
+            User toUser = User.AllUsers[toTextBox.Text];
+
+            using (X509Certificate2 toUserCert = CryptoService.FindCertificate(toUser))
+            {
+
+                if (toUserCert == null)
+                {
+
+                    ExclamationMsgBox($"Can not find certificate for user: \"{toUser.FullName}\"",
+                        "Can not find certificate");
+
+                    return;
+
+                }
+
+                using (RSA toUserPublicKey = toUserCert.GetRSAPublicKey())
+                {
+
+                    // No rsa public key or cert not valid
+                    if (toUserPublicKey == null || !CryptoService.ValidateCertificate(toUserCert))
+                    {
+
+                        ExclamationMsgBox($"Certificate not valid for user: \"{toUser.FullName}\"",
+                            "Certificate not valid");
+                        return;
+
+                    }
+
+                    byte[] signature;
+                    byte[] data;
+
+                    try
+                    {
+
+                        using (RSA userPrivateKey = PrivateKeyDialog())
+                        {
+                            //Null means we cancel
+                            if (userPrivateKey == null)
+                                return;
+
+                            string formattedMsg = Message.MakeXml(currentUser, msgTextBox.Text);
+                            data = Encoding.UTF8.GetBytes(formattedMsg);
+                            signature = CryptoService.SignData(data, userPrivateKey);
+
+                        }
+
+                    }
+                    catch (FileFormatException)
+                    {
+
+                        MessageBox.Show("Invalid pem file", "Invalid pem file",
+                            MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                        return;
+
+                    }
+
+                    byte[] symmKey = CryptoService.GenerateSymmetricKey();
+                    byte[] iV = CryptoService.GenerateIV();
+                    byte[] envelope = CryptoService.EncryptSymmetricData(symmKey, iV, toUserPublicKey);
+
+                    byte[] dataAndSign = Utility.CombineByteArrays(data, signature);
+                    byte[] encData = CryptoService.EncryptData(dataAndSign, symmKey, iV);
+                    // Zero out the symmetric key
+                    Array.Clear(symmKey, 0, symmKey.Length);
+                    byte[] payload = Utility.CombineByteArrays(envelope, encData);
+                    string imagePath = imageTextBox.Text;
+                    try
+                    {
+
+                        Steganography.Embed(imagePath, imagePath, payload);
+
+                    }
+                    //TODO: Implement separate exception for small image
+                    catch(FileFormatException)
+                    {
+
+                        MessageBox.Show("Image is too small for given message", "Small image", 
+                            MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    }
+
+                    string hash = CryptoService.HashFile(imagePath);
+                    UnreadList list = new UnreadList(toUser.UnreadFile);
+                    list.Add(imagePath, hash);
+                    list.Write(toUser.UnreadFile);
+
+                    MessageBox.Show("Message post succesful", "Success", MessageBoxButton.OK);
+
+                }
+
+            }
+        }
+
+        void OnMsgTxtBoxTextChanged(object sender, TextChangedEventArgs evArgs)
+        {
+            postMsgButton.IsEnabled = msgTextBox.Text.Length > 0;
+        }
+
+        void ExclamationMsgBox(string text, string caption)
+        {
+            MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        }
+
+        RSA PrivateKeyDialog()
+        {
+
+            var fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Pem file|*.pem";
+            bool? result = fileDialog.ShowDialog();
+
+            return result == true ? CryptoService.ReadPemFile(fileDialog.FileName) : null;
+
+        }
+
     }
+
 }

@@ -58,9 +58,9 @@
                     </Border>
                     <Label Grid.Row="2" Content="Selected image:"/>
                     <Image x:Name="imageControl" Grid.Row="3" Width="300" Source="Placeholder.bmp"/>
-                    <Button Grid.Row="4" Margin="10" Content="Post message"/>
+                    <Button x:Name="postMsgButton" Grid.Row="4" Margin="10" Content="Post message" Click="OnPostMsgButtonClick" IsEnabled="False"/>
                 </Grid>
-                <TextBox Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True"/>
+                <TextBox x:Name="msgTextBox" Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" TextChanged="OnMsgTxtBoxTextChanged"/>
             </Grid>
 
         </TabItem>
