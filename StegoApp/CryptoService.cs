@@ -73,41 +73,41 @@ namespace StegoApp
         }
 
         // Using symmetric algorithm
-        public static byte[] EncryptData(string data, byte[] key, byte[] iV)
+        public static byte[] EncryptData(byte[] data, byte[] key, byte[] iV)
         {
 
             using (Aes aes = Aes.Create())
-            using (MemoryStream memStream = new MemoryStream())
+            using (var memStream = new MemoryStream())
             {
 
                 using (var encryptor = aes.CreateEncryptor(key, iV))
-                using (CryptoStream cryptoStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write))
-                using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
-                    streamWriter.Write(data);
+                using (var cryptoStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write))
+                    cryptoStream.Write(data, 0, data.Length);
 
 
-                // Stream is flushed upon closing CrytpoStream to MemoryStream
-                return memStream.ToArray();
+                    // Stream is flushed upon closing CrytpoStream to MemoryStream
+                    return memStream.ToArray();
 
             }
 
 
         }
 
-        public static string DecryptData(byte[] data, byte[] key, byte[] iV)
+        public static byte[] DecryptData(byte[] data, byte[] key, byte[] iV)
         {
 
             using (Aes aes = Aes.Create())
-            using (MemoryStream memStream = new MemoryStream(data))
+            using (var dstStream = new MemoryStream())
+            using (var memStream = new MemoryStream(data))
             using (var decryptor = aes.CreateDecryptor(key, iV))
-            using (CryptoStream cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
-            using (StreamReader streamReader = new StreamReader(cryptoStream))
+            using (var cryptoStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read))
             {
 
-                string decData = streamReader.ReadToEnd();
-                return decData;
+                cryptoStream.CopyTo(dstStream);
+                return dstStream.ToArray();
 
             }
+
         }
 
         // Creates a envelope
