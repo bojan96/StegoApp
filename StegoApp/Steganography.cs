@@ -19,7 +19,15 @@ namespace StegoApp
             if (!ValidImageFormat(srcFilename))
                 throw new FileFormatException("Unsupported image format");
 
-            using (Bitmap srcBmp = new Bitmap(srcFilename))
+            Bitmap srcBmp;
+
+            // Creating copy, it will not lock source image file
+            using (Bitmap srcBmpTemp = new Bitmap(srcFilename))
+            {
+                srcBmp = new Bitmap(srcBmpTemp);
+            }
+
+            using (srcBmp)
             {
 
                 // Mul 2, because 2 nibbles per byte
