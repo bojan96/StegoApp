@@ -60,7 +60,8 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Grid.Row="0" Grid.Column="0"  Content="To:" HorizontalAlignment="Right"/>
-                            <TextBox x:Name="toTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="toTextBox" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center"
+                                     TextChanged="OnToUserTextBoxChange"/>
                             <Button Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" Content="Select" Style="{StaticResource ButtonStyle}" 
                                     Click="SelectUserClicked"/>
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="1"/>
@@ -75,7 +76,7 @@
                     </Border>
                     <Label Grid.Row="2" Content="Selected image:"/>
                     <Image x:Name="imageControl" Grid.Row="3" Width="300" Source="Placeholder.bmp"/>
-                    <Button x:Name="postMsgButton" Grid.Row="4" Margin="10" Content="Post message" Click="OnPostMsgButtonClick" IsEnabled="False"/>
+                    <Button x:Name="postMsgButton" Grid.Row="4" Margin="10" Content="Post message" Click="OnPostMsgButtonClick"/>
                 </Grid>
                 <TextBox x:Name="msgTextBox" Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" AcceptsReturn="True" TextChanged="OnMsgTxtBoxTextChanged"/>
             </Grid>

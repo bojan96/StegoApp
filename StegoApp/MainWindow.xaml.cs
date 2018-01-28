@@ -101,8 +101,7 @@ namespace StegoApp
                 {
 
                     SetPlaceholderImage();
-                    MessageBox.Show("Format not supported", "Format not supported",
-                        MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    ExclamationMsgBox("Format not supported", "Format not supported");
 
                     return;
 
@@ -137,7 +136,16 @@ namespace StegoApp
         {
 
 
-            User toUser = User.AllUsers[toTextBox.Text];
+            User toUser;
+            bool queryResult = User.AllUsers.TryGetValue(toTextBox.Text, out toUser);
+
+            if(!queryResult)
+            {
+
+                ExclamationMsgBox("User does not exist", "User does not exist");
+                return;
+
+            }
 
             using (X509Certificate2 toUserCert = CryptoService.FindCertificate(toUser))
             {
@@ -231,7 +239,7 @@ namespace StegoApp
 
         void OnMsgTxtBoxTextChanged(object sender, TextChangedEventArgs evArgs)
         {
-            postMsgButton.IsEnabled = msgTextBox.Text.Length > 0;
+            //EnablePostMsgButton();
         }
 
         void ExclamationMsgBox(string text, string caption)
@@ -261,6 +269,7 @@ namespace StegoApp
             {
 
                 ExclamationMsgBox("Message does not exist", "Message does not exist");
+                RemoveMessage(msgRecord);
                 return;
 
             }
@@ -271,6 +280,7 @@ namespace StegoApp
             {
 
                 ExclamationMsgBox("Message altered", "Message altered");
+                RemoveMessage(msgRecord);
                 return;
 
             }
@@ -282,16 +292,30 @@ namespace StegoApp
 
             try
             {
-                using (RSA userPrivateKey = PrivateKeyDialog())
-                    (symmKey, iV) = CryptoService.DecryptSymmetricData(envelope, userPrivateKey);
 
+                using (RSA userPrivateKey = PrivateKeyDialog())
+                {
+
+                    if (userPrivateKey == null)
+                        return;
+
+                    (symmKey, iV) = CryptoService.DecryptSymmetricData(envelope, userPrivateKey);
+                }
 
             }
             catch (FileFormatException)
             {
 
-                //TODO: avoid code duplication
+                // TODO: avoid code duplication
+                // TODO: make exception class for this purpose
                 ExclamationMsgBox("Invalid pem file", "Invalid pem file");
+                return;
+
+            }
+            catch (CryptographicException)
+            {
+
+                ExclamationMsgBox("Decryption error", "Decryption error");
                 return;
 
             }
@@ -313,19 +337,41 @@ namespace StegoApp
 
             }
 
-            unreadList.Remove(msgRecord.Path);
-            recordCollection.Remove(msgRecord);
-            File.Delete(msgRecord.Path);
-
-            ShowMessageWindow(message, fromUser, dateTime);
+            RemoveMessage(msgRecord);
+            ShowMessageWindow(message, fromUser, dateTime);  
 
         }
 
         void ShowMessageWindow(string message, User fromUser, DateTime dateTime)
         {
 
-            var messageWin= new MessageWindow(fromUser, message, dateTime);
+            var messageWin = new MessageWindow(fromUser, message, dateTime);
             messageWin.ShowDialog();
+
+        }
+
+        void RemoveMessage(Record msgRecord)
+        {
+
+            unreadList.Remove(msgRecord.Path);
+            unreadList.Write(currentUser.UnreadFile);
+            recordCollection.Remove(msgRecord);
+            File.Delete(msgRecord.Path);
+
+        }
+
+        void EnablePostMsgButton()
+        {
+
+           /* postMsgButton.IsEnabled = msgTextBox.Text.Length > 0 && imageTextBox.Text.Length > 0 
+                && toTextBox.Text.Length > 0;*/
+
+        }
+
+        void OnToUserTextBoxChange(object sender, TextChangedEventArgs evArgs)
+        {
+
+            //EnablePostMsgButton();
 
         }
 
