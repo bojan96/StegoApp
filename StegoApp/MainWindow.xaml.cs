@@ -127,14 +127,11 @@ namespace StegoApp
 
         }
 
-        void SetPlaceholderImage()
-        {
+        void SetPlaceholderImage() => 
             imageControl.Source = new BitmapImage(new Uri("Placeholder.bmp", UriKind.Relative));
-        }
-
+    
         void OnPostMsgButtonClick(object sender, RoutedEventArgs e)
         {
-
 
             User toUser;
             bool queryResult = User.AllUsers.TryGetValue(toTextBox.Text, out toUser);
@@ -155,7 +152,6 @@ namespace StegoApp
 
                     ExclamationMsgBox($"Can not find certificate for user: \"{toUser.FullName}\"",
                         "Can not find certificate");
-
                     return;
 
                 }
