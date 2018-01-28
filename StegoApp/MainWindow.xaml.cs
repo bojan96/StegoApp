@@ -281,6 +281,9 @@ namespace StegoApp
 
             }
 
+            if(msgRecord.Overwrite)
+                ExclamationMsgBox("This message overwrote other message", "Message ovewritten");
+
             byte[] extractedData = Steganography.Extract(msgRecord.Path);
             (byte[] envelope, byte[] encData) = Utility.SplitArray(extractedData);
             byte[] symmKey;
