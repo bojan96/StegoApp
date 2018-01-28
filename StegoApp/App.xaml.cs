@@ -12,10 +12,16 @@ namespace StegoApp
     public partial class App : Application
     {
 
+        App()
+        {
+
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+        }
+
         void OnAppStart(object sender, StartupEventArgs args)
         {
 
-            AppDomain.CurrentDomain.UnhandledException +=
             try
             {
 
