@@ -8,15 +8,14 @@ using System.Windows;
 
 namespace StegoApp
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+
     public partial class App : Application
     {
 
-        void OnAppStart(object sender,StartupEventArgs args)
+        void OnAppStart(object sender, StartupEventArgs args)
         {
 
+            AppDomain.CurrentDomain.UnhandledException +=
             try
             {
 
@@ -32,8 +31,19 @@ namespace StegoApp
                 Shutdown();
 
             }
-            
+
 
         }
+
+        void OnUnhandledException(object sender, UnhandledExceptionEventArgs evArgs)
+        {
+
+            Exception ex = (Exception)evArgs.ExceptionObject;
+            MessageBox.Show(ex.Message, "Unhandled exception", MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown();
+
+        }
+
     }
+
 }
