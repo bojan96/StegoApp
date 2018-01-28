@@ -206,6 +206,7 @@ namespace StegoApp
                     Array.Clear(symmKey, 0, symmKey.Length);
                     byte[] payload = Utility.CombineByteArrays(envelope, encData);
                     string imagePath = imageTextBox.Text;
+
                     try
                     {
 
@@ -299,6 +300,7 @@ namespace StegoApp
                         return;
 
                     (symmKey, iV) = CryptoService.DecryptSymmetricData(envelope, userPrivateKey);
+
                 }
 
             }
@@ -325,7 +327,16 @@ namespace StegoApp
             (string message, User fromUser, DateTime dateTime) =
                 Message.ParseXml(Encoding.UTF8.GetString(msgBytes));
 
-            RSA fromUserPublicKey = CryptoService.FindCertificate(fromUser).GetRSAPublicKey();
+            RSA fromUserPublicKey = CryptoService.FindCertificate(fromUser)?.GetRSAPublicKey();
+
+            if (fromUserPublicKey == null)
+            {
+
+                ExclamationMsgBox("Sender is not registered on system","Sender not registered");
+                RemoveMessage(msgRecord);
+
+            }
+
             bool verificationResult = CryptoService.VerifyData(msgBytes, signature, fromUserPublicKey);
 
             if (!verificationResult)
